@@ -5,6 +5,9 @@ Created on Tue Apr 27 16:19:32 2021
 @author: Allegra Copland
 """
 
+# Resources
+    # https://www.youtube.com/watch?v=Q2aEzeMDHMA&t=1s video on JPEG compression from DCT onwards
+
 from scipy.fftpack import dct, idct
 from skimage import io
 import numpy as np
@@ -22,11 +25,6 @@ def plot_rgb(a):
     plt.imshow(a[:,:,2] ,cmap=plt.cm.Blues)
 
 #custom colormaps:
-
-def rgb(a):
-        if len(a.shape)==2:
-            return "Sorry, this is a grayscale image!"
-        return a[:,:] #returns [R,G,B]
     
 def fit(a):
     a /= np.max(np.abs(a))
@@ -66,16 +64,19 @@ def grid_binim(a):
     binim(out)
     return out
 
-blank = np.zeros((4,4,4,4))
-def dct_grid():
-    grid = np.full((8,8,8,8),0.0)
-    f = 1
-    for i in range(0,8):
-        for j in range(0,8):
-            for x in range(0,8):
-                for y in range(0,8):
-                    # got equation from https://www.dspguide.com/ch8/4.htm#:~:text=The%20basis%20functions%20are%20a,form%20the%20time%20domain%20signal.
-                    grid[i][j][x][y] += ((np.cos(f*np.pi*x*i/8.0) + np.cos(f*np.pi*y*j/8.0))/4)+0.5
+# for debugging
+# blank = np.zeros((4,4,4,4))
+
+
+def dct_grid_re(): # reverse engineered dct grid
+    grid = np.zeros((8,8,8,8))
+    spot = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            spot[i][j] = 1
+            grid[i][j] = idct2(spot)
+            spot[i][j] = 0
+            #binim(grid[i][j])
     return grid
 
 def recalibrate(a):
@@ -90,16 +91,6 @@ def recal_grid(a):
             out[i][j] = recalibrate(a[i][j])
     return out
 
-def dct_grid_re(): # reverse engineered dct grid
-    grid = np.zeros((8,8,8,8))
-    spot = np.zeros((8,8))
-    for i in range(8):
-        for j in range(8):
-            spot[i][j] = 1
-            grid[i][j] = idct2(spot)
-            spot[i][j] = 0
-            #binim(grid[i][j])
-    return grid
 
 grid = dct_grid_re()
 grid_binim(recalibrate(grid)) # outputs dct coefficient grid
