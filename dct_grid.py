@@ -39,6 +39,7 @@ def dct2(a):
 def idct2(a):
     return idct(idct(a.T,norm=nrm).T,norm=nrm)
 
+# Prints an image in black and white
 def binim(a):
     plt.figure()
     plt.axis("off")
@@ -67,7 +68,7 @@ def grid_binim(a):
 # for debugging
 # blank = np.zeros((4,4,4,4))
 
-
+# Creates the DCT cosine basis grid
 def dct_grid_re(): # reverse engineered dct grid
     grid = np.zeros((8,8,8,8))
     spot = np.zeros((8,8))
@@ -79,11 +80,14 @@ def dct_grid_re(): # reverse engineered dct grid
             #binim(grid[i][j])
     return grid
 
+# Up or down-scales the colors in an image to fit between 0 and 1
 def recalibrate(a):
     mx = np.ndarray.max(a)
     out = a/(2*mx)+.5
     return out
 
+# Similar to recalibrate, but works on a 4d array (2d array of 2d images)
+# It normalizes each image separately.
 def recal_grid(a):
     out = np.ndarray(a.shape)
     for i in range(8):
