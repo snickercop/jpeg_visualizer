@@ -10,6 +10,8 @@ Created on Sat May  1 18:28:57 2021
 
 import matplotlib.pyplot as plt
 from skimage import data,color
+import scipy.signal as sg
+import numpy as np
 
 # You can use any color image you want for testing, 
 # but I've included one from the skimage library to start with.
@@ -37,7 +39,12 @@ def plot_ycbcr(a):
     plt.subplot(1,3,1)
     plt.imshow(b[:,:,0], cmap=plt.cm.gray)
     plt.subplot(1,3,2)
-    plt.imshow(b[:,:,1] ,cmap=plt.cm.Blues)
+    plt.imshow(b[:,:,1][::10,::10] ,cmap=plt.cm.Blues)
     plt.subplot(1,3,3)
-    plt.imshow(b[:,:,2] ,cmap=plt.cm.Reds)
+    plt.imshow(b[:,:,2][::10,::10] ,cmap=plt.cm.Reds)
     
+plot_ycbcr(astro)
+
+
+
+
