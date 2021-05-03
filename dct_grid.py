@@ -12,21 +12,10 @@ from scipy.fftpack import dct, idct
 from skimage import io
 import numpy as np
 import matplotlib.pyplot as plt
-from utility import binim, grid_binim, recalibrate, recal_grid
+from utility import binim, recalibrate, recal_grid, normalize, LOCAL_IMAGE, get_blocks, grid_im
 
 np.seterr(all='warn')
 
-def plot_rgb(a):
-    plt.figure()
-    plt.subplot(1,3,1)
-    plt.imshow(a[:,:,0] ,cmap=plt.cm.Reds)
-    plt.subplot(1,3,2)
-    plt.imshow(a[:,:,1] ,cmap=plt.cm.Greens)
-    plt.subplot(1,3,3)
-    plt.imshow(a[:,:,2] ,cmap=plt.cm.Blues)
-
-#custom colormaps:
-    
 def fit(a):
     a /= np.max(np.abs(a))
     a = (a+1)/2
@@ -44,8 +33,15 @@ def idct2(a):
 # for debugging
 # blank = np.zeros((4,4,4,4))
 
+def dct_on_grid(blocks):
+    out = np.zeros((blocks.shape))
+    for i in range(blocks.shape[0]):
+        for j in range(blocks.shape[1]):
+            out[i][j] = dct2(blocks[i][j])
+    return out
+
 # Creates the DCT cosine basis grid
-def dct_grid_re(): # reverse engineered dct grid
+def bases_grid(): # makes reverse engineered dct grid
     grid = np.zeros((8,8,8,8))
     spot = np.zeros((8,8))
     for i in range(8):
@@ -58,5 +54,8 @@ def dct_grid_re(): # reverse engineered dct grid
 
 
 
-grid = dct_grid_re()
-grid_binim(recalibrate(grid)) # outputs dct coefficient grid
+grid = bases_grid()
+#grid_im(grid) # outputs dct coefficient grid
+blocks = get_blocks(LOCAL_IMAGE[:,:,0])
+dctonblocks = dct_on_grid(blocks)
+grid_im(dctonblocks)
