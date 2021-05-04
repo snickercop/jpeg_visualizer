@@ -22,14 +22,15 @@ cwheel = data.colorwheel()
 # Remember how in the imaging unit we split a picture into RGB color channels?
 # Here is a function that plots the 3 channels of the given image a. 
 # In this case, it colors the first channel red, and so on, so that it illustrates RGB channels in an image.
+# Got help from here https://stackoverflow.com/questions/44752962/how-to-correctly-display-red-green-and-blue-rgb-channels-of-an-image-with-py
 def plot_rgb(a):
     plt.figure()
-    plt.subplot(1,3,1)
-    plt.imshow(a[:,:,0] ,cmap=plt.cm.Reds)
-    plt.subplot(1,3,2)
-    plt.imshow(a[:,:,1] ,cmap=plt.cm.Greens)
-    plt.subplot(1,3,3)
-    plt.imshow(a[:,:,2] ,cmap=plt.cm.Blues)
+    for i in range(3):
+        plt.subplot(1,3,i+1)
+        temp = np.zeros(a.shape,dtype=a.dtype)
+        temp[:,:,i] = a[:,:,i]
+        plt.imshow(temp)
+
 
 # Here is a similar function for YCbCr channels
 def plot_ycbcr(a):
@@ -43,7 +44,7 @@ def plot_ycbcr(a):
     plt.subplot(1,3,3)
     plt.imshow(b[:,:,2][::10,::10] ,cmap=plt.cm.Reds)
     
-plot_ycbcr(astro)
+#plot_ycbcr(astro)
 
 
 

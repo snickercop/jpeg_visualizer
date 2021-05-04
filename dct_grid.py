@@ -13,6 +13,7 @@ from skimage import io
 import numpy as np
 import matplotlib.pyplot as plt
 from utility import binim, recalibrate, recal_grid, normalize, LOCAL_IMAGE, get_blocks, grid_im
+from color_transform import plot_rgb
 
 np.seterr(all='warn')
 
@@ -54,8 +55,3 @@ def bases_grid(): # makes reverse engineered dct grid
 
 
 
-grid = bases_grid()
-#grid_im(grid) # outputs dct coefficient grid
-blocks = get_blocks(LOCAL_IMAGE[:,:,0])
-dctonblocks = dct_on_grid(blocks)
-grid_im(dctonblocks)
