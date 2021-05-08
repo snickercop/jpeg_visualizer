@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from skimage import data,color
 import scipy.signal as sg
 import numpy as np
+from PIL import Image
+from IPython.display import display # PIL that will display property in IPython
 
 # You can use any color image you want for testing, 
 # but I've included one from the skimage library to start with.
@@ -36,13 +38,15 @@ def plot_rgb(a):
 def plot_ycbcr(a):
     b = color.rgb2ycbcr(a) # we assume the input image is in RGB--if not, this will
                             # not give the correct output
+    b = b.astype(int)
+    #plt.imshow(b.astype(int))
     plt.figure()
-    plt.subplot(1,3,1)
-    plt.imshow(b[:,:,0], cmap=plt.cm.gray)
-    plt.subplot(1,3,2)
-    plt.imshow(b[:,:,1][::10,::10] ,cmap=plt.cm.Blues)
-    plt.subplot(1,3,3)
-    plt.imshow(b[:,:,2][::10,::10] ,cmap=plt.cm.Reds)
+    for i in range(3):
+        plt.subplot(1,3,i+1)
+        temp = np.zeros(b.shape,dtype=b.dtype)
+        temp[:,:,i] = b[:,:,i]
+        plt.imshow(color.ycbcr2rgb(temp))
+        
     
 #plot_ycbcr(astro)
 

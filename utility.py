@@ -8,7 +8,7 @@ Created on Sun May  2 13:44:18 2021
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
-from skimage import data,color
+from skimage import data,color, exposure
 from skimage.transform import rescale
 astro = data.astronaut()
 normalize = matplotlib.colors.Normalize(vmin=0.0,vmax=1.0)
@@ -17,11 +17,13 @@ LOCAL_IMAGE = plt.imread("bernal_medium.jpg") # change to use your own image. st
 # Up or down-scales the colors in an image to fit between 0 and 1
 def recalibrate(a):
     mx = np.ndarray.max(a)
-    mn = np.ndarray.min(a)
-    if mx == mn:
-        return 1
-    shifted = a + (0-mn)
-    out = shifted/(mx-mn)
+    squish = a/mx
+    mn = np.ndarray.min(squish)
+    if mn < 0:
+        shift = squish - np.ndarray.min(squish)
+    else:
+        shift = squish
+    out = shift/np.ndarray.max(shift)
     return out
 
 # Similar to recalibrate, but works on a 4d array (2d array of 2d images)
@@ -34,12 +36,13 @@ def recal_grid(a):
     return out
 
 # Prints an image in black and white
-def binim(a):
+def binim(a, title=None):
     plt.figure()
     plt.axis("off")
+    plt.title(title)
     plt.imshow(recalibrate(a),cmap=plt.cm.gray)
 
-# def grid_binim(rawa):
+# def grid_binim(rawa)
 #     a = recalibrate(rawa)
 #     bweight = 1
 #     bcolor = .8
@@ -61,7 +64,7 @@ def binim(a):
 #     binim(out)
 #     return out
 
-def grid_im(a, cmap=None, recal=True, dtype=None, show=True, title=None):
+def grid_im(a, cmap=None, recal=False, dtype=None, show=False, title=None):
     if recal:
         a = recal_grid(a)
     bweight = 1
@@ -89,14 +92,22 @@ def grid_im(a, cmap=None, recal=True, dtype=None, show=True, title=None):
 
 
 def get_blocks(a, dtype=None): # only works on 2d arrays whose dimensions are divisible by 8
+                               # for multi-dimensional (e.g. color) images, each channel will have to be blocked separately
     h,w = a.shape
     blockh = int(h/8)
     blockw = int(w/8)
-    blocks = np.ndarray((blockh,blockw,8,8),dtype='uint8')
+    blocks = np.zeros((blockh,blockw,8,8),dtype='int8')
     for i in range(blockh):
         for j in range(blockw):
             blocks[i][j] = a[i*8:i*8+8,j*8:j*8+8]
     return blocks
+    
+
+def contrast_boost(a): # boost the "contrast" in any array
+    out = exposure.equalize_hist(a)
+    return out
+        
+    
     
 # debug zone
 styles = plt.imread("styles.jpg")
