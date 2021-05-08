@@ -42,3 +42,14 @@ def qmatrix(index):
         out[dig1,dig2] = oglist[i]
     return out
 
+def quantize(block, index=0, k=5):
+    out = np.zeros((8,8))
+    m = qmatrix(index)
+    # note: k is buffer factor -- larger number means higher quality from finer quantization matrix
+    for i in range(block.shape[0]):
+        for j in range(block.shape[1]):
+            temp = int(block[i][j]*k/m[i][j])
+            out[i][j] = m[i][j]*temp/k
+            
+            
+    return out
